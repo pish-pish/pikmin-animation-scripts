@@ -1,5 +1,6 @@
 import binary
 import general_animation
+import math
 from j3d_animation import J3DSkeletonAnimation, Keyframe
 from dataclasses import dataclass
 from io import BufferedIOBase
@@ -11,6 +12,13 @@ class BCA(J3DSkeletonAnimation):
 
     MAGIC = "J3D1bca1"
     SECTION = "ANF1"
+
+    def convert_rotations(self):
+        for joint in self.tracks:
+            for axis in "XYZ":
+                rotations = joint.rotation_keys[axis]
+                for key in rotations:
+                    key.value = math.radians(key.value)
 
     def get_angle_multiplier(self) -> int:
         return -1

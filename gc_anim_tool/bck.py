@@ -15,6 +15,27 @@ class BCK(J3DSkeletonAnimation):
     MAGIC = "J3D1bck1"
     SECTION = "ANK1"
 
+    def fix_tangents(self):
+        def set_channel_tangents(channel: list[Keyframe]):
+            for key in channel:
+                if key.in_tangent != None:
+                    key.in_tangent *= 30.0
+                if key.out_tangent != None:
+                    key.out_tangent *= 30.0
+
+        for joint in self.tracks:
+            for axis in "XYZ":
+                set_channel_tangents(joint.scale_keys[axis])
+                set_channel_tangents(joint.rotation_keys[axis])
+                set_channel_tangents(joint.translation_keys[axis])
+
+    def convert_rotations(self):
+        for joint in self.tracks:
+            for axis in "XYZ":
+                rotations = joint.rotation_keys[axis]
+                for key in rotations:
+                    key.value = math.radians(key.value)
+
     def get_angle_multiplier(self) -> int:
         max_angle = 0.0
         for track in self.tracks:
